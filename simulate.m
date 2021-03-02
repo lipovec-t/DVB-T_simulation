@@ -3,7 +3,7 @@
 % Author: Thomas Lipovec
 % Matriculation number: 01529232
 % Email: thomas.lipovec@tuwien.ac.at
-% Dec 2020; Last revision: 30-Dec-2020
+% March 2021; Last revision: 02-March-2021
 
 %% Setup
 rng('default')
@@ -13,4 +13,4 @@ kBits = 4; % Bits per symbol
 dataIn = randi([0 1], nSymbols*kBits, 1);
 
 %% Modulation
-dataMod = qamModulation(dataIn); % 16-QAM
+dataMod = modules.qamModulation(dataIn); % 16-QAM
