@@ -20,3 +20,4 @@ for i=1:nOFDMsymbols
 end
 
 %% Pilot insertion
+dataModWithPilots = modules.pilotInsertion(dataMod);
