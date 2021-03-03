@@ -5,7 +5,7 @@
 % Email: thomas.lipovec@tuwien.ac.at
 % March 2021; Last revision: 02-March-2021
 
-%% Setup
+%% Generate Data
 rng('default')
 nSamples = 6817;
 kBits = 4; % Bits per sample
@@ -21,3 +21,6 @@ end
 
 %% Pilot insertion
 dataModWithPilots = modules.pilotInsertion(dataMod);
+
+%% OFDM modulator
+ofdmSignal = modules.ofdmModulator(dataModWithPilots);
