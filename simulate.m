@@ -7,10 +7,16 @@
 
 %% Setup
 rng('default')
-nSymbols = 6;      
-kBits = 4; % Bits per symbol
+nSamples = 6817;
+kBits = 4; % Bits per sample
+nOFDMsymbols = 68; % per frame
 % Generate vector of random binary data.
-dataIn = randi([0 1], nSymbols*kBits, 1);
+dataIn = randi([0 1], 68, nSamples*kBits);
 
 %% Modulation
-dataMod = modules.qamModulation(dataIn); % 16-QAM
+dataMod = zeros(nOFDMsymbols, nSamples);
+for i=1:nOFDMsymbols
+    dataMod(i,:) = modules.qamModulation(dataIn(i,:)); % 16-QAM
+end
+
+%% Pilot insertion
