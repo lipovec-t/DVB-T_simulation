@@ -36,3 +36,6 @@ dataModWithPilots = modules.pilotInsertion(dataMod);
 
 %% OFDM modulator
 ofdmSignal = modules.ofdmModulator(dataModWithPilots);
+
+%% Channel simulation
+
