@@ -35,7 +35,22 @@ end
 dataModWithPilots = modules.pilotInsertion(dataMod);
 
 %% OFDM modulator
-ofdmSignal = modules.ofdmModulator(dataModWithPilots);
+ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
+SNRdB   = 10;
+SNRlin  = 10^(SNRdB/10);
+% transmit data over channel
+ofdmSignalRX = zeros(68, 10240 + length(modules.channelGenerator) - 1);
+for i=1:nOFDMsymbols
+    signalTX = ofdmSignalTX(i,:);
+    signalPower = sum(abs(signalTX).^2) / length(signalTX);
+    noisePower = signalPower / SNRlin;
+    % convolution with channel impulse response
+    RXdataNoNoise = conv(signalTX, modules.channelGenerator());
+    n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
+    RXdata = RXdataNoNoise + n;
+    ofdmSignalRX(i,:) = RXdata;
+end
+
 
