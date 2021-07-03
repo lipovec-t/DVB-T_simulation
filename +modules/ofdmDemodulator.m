@@ -1,5 +1,5 @@
 function dataRX = ofdmDemodulator(ofdmSignalRXsynchronized)
-% OFDM Modulator
+% OFDM Demodulator
     nOFDMsymbols = 68;
     FFTsize = 8192;
     CPlength = 8192/4;
