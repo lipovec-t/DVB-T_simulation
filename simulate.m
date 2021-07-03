@@ -41,27 +41,31 @@ ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 SNRdB   = 10;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
-ofdmSignalRX = zeros(68, 10240 + length(modules.channelGenerator) - 1);
+% ofdmSignalRX1 corresponds to a frame of OFDM symbols
+ofdmSignalRX1 = zeros(68, 10240 + length(modules.channelGenerator) - 1);
 for i=1:nOFDMsymbols
     signalTX = ofdmSignalTX(i,:);
     signalPower = sum(abs(signalTX).^2) / length(signalTX);
     noisePower = signalPower / SNRlin;
     % convolution with channel impulse response
-    RXdataNoNoise = conv(signalTX, modules.channelGenerator());
+    RXdataNoNoise = conv(modules.channelGenerator(),signalTX);
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
-    % time and frequency offset
-    timeOffset = randi([0,1000],1);
-    frequencyOffsetMin = -1/2;
-    frequencyOffsetMax = 1/2;
-    frequencyOffset = (frequencyOffsetMax - frequencyOffsetMin) * rand() + frequencyOffsetMin;
-    RXdataDelayed = [zeros(1,timeOffset), RXdata1];
-    RXdataDelayed(1:timeOffset) = sqrt(noisePower/2) * (randn(1,timeOffset) + 1j*randn(1,timeOffset));
-    % not sure of this frequency should be introduced here over the whole
-    % delayed signal or at the signal without delay
-    m = 0:1:length(RXdataDelayed)-1;
-    RXdata = RXdataDelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
-    % ofdmSignalRX(i,:) = RXdata;
+    ofdmSignalRX1(i,:) = RXdata1;
 end
+% reshape received OFDM frame to a row vector
+ofdmSignalRX1 = reshape(ofdmSignalRX1',1,[]);
 
+% time and frequency offset
+timeOffset = randi([0,1000],1);
+frequencyOffsetMin = -1/2;
+frequencyOffsetMax = 1/2;
+frequencyOffset = (frequencyOffsetMax - frequencyOffsetMin) * rand() + frequencyOffsetMin;
+ofdmSignalRXdelayed = [zeros(1,timeOffset), ofdmSignalRX1];
+ofdmSignalRXdelayed(1:timeOffset) = sqrt(noisePower/2) * (randn(1,timeOffset) + 1j*randn(1,timeOffset));
+m = 0:1:length(ofdmSignalRXdelayed)-1;
+ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
+
+%% Synchronisation
+ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
 
