@@ -70,9 +70,7 @@ ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
 
 %% Demodulation
-dataRX = zeros(nOFDMsymbols, nSamples);
-for i=1:nOFDMsymbols
-    dataRX(i,:) = modules.ofdmDemodulator(ofdmSignalRXsynchronized(i,:)); 
-end
+dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized); 
+
 
 
