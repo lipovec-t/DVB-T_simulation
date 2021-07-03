@@ -1,4 +1,4 @@
-function dataWithPilots = pilotInsertion(dataMod)
+function [dataWithPilots,pilots,pilotPositions] = pilotInsertion(dataMod)
 % Inserts pilots in the 68x6817 frame grid.
     nOFDMsymbols = 68;
     nSubcarriers = 6817;

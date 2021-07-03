@@ -32,7 +32,7 @@ for i=1:nOFDMsymbols
 end
 
 %% Pilot insertion
-dataModWithPilots = modules.pilotInsertion(dataMod);
+[dataModWithPilots, pilots, pilotPositions] = modules.pilotInsertion(dataMod);
 
 %% OFDM modulator
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
@@ -70,7 +70,12 @@ ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
 
 %% Demodulation
-dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized); 
+dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
+% extract data of used subcarriers
+dataRX = dataRX(:,1:6817);
+
+%% Channel Estimation
+H = modules.channelEstimation(dataRX, pilots);
 
 
 
