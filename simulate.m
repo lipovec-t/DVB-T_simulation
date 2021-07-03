@@ -49,8 +49,19 @@ for i=1:nOFDMsymbols
     % convolution with channel impulse response
     RXdataNoNoise = conv(signalTX, modules.channelGenerator());
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
-    RXdata = RXdataNoNoise + n;
-    ofdmSignalRX(i,:) = RXdata;
+    RXdata1 = RXdataNoNoise + n;
+    % time and frequency offset
+    timeOffset = randi([0,1000],1);
+    frequencyOffsetMin = -1/2;
+    frequencyOffsetMax = 1/2;
+    frequencyOffset = (frequencyOffsetMax - frequencyOffsetMin) * rand() + frequencyOffsetMin;
+    RXdataDelayed = [zeros(1,timeOffset), RXdata1];
+    RXdataDelayed(1:timeOffset) = sqrt(noisePower/2) * (randn(1,timeOffset) + 1j*randn(1,timeOffset));
+    % not sure of this frequency should be introduced here over the whole
+    % delayed signal or at the signal without delay
+    m = 0:1:length(RXdataDelayed)-1;
+    RXdata = RXdataDelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
+    % ofdmSignalRX(i,:) = RXdata;
 end
 
 
