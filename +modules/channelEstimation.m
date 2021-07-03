@@ -5,5 +5,14 @@ function H = channelEstimation(dataRX, pilots)
     H = zeros(nOFDMsymbols, nSubcarriers);
     H = dataRX ./ pilots;
     H(isinf(H)|isnan(H)) = 0;
-        
+    
+    %interpolatedA = @(y,x) interp2(1:nSubcarriers,1:nOFDMsymbols,A,x,y);
+    interpolatedH = @(y,x) griddata(1:nSubcarriers,1:nOFDMsymbols,H,x,y); 
+    for i=1:nOFDMsymbols
+        for j =1:nSubcarriers
+            if H == 0
+                H(i,j) = interpolatedH(i,j);
+            end
+        end
+    end    
 end
