@@ -1,4 +1,4 @@
-function ofdmSignal = ofdmModulator(dataModWithPilots)
+function dataRX = ofdmDemodulator(dataModWithPilots)
 % OFDM Modulator
     nOFDMsymbols = 68;
     FFTsize = 8192;
