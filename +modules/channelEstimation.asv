@@ -1,14 +1,16 @@
 function H = channelEstimation(dataRX, pilots)
 % Performs channel estimation on the received data and returns the channel.
     nOFDMsymbols = 68;
-    nDataCarriers = 6817;
+    %nSubcarriers = 6817;
+    FFTsize = 8192;
     
+    H = zeros(nOFDMsymbols, FFTsize);
     H = dataRX ./ pilots;
     H(isinf(H)|isnan(H)) = 0;
     
     for i=1:nOFDMsymbols
-        H(i,:) = ifft(H(i,:), nDataCarriers);
+        H(i,:) = ifft(H(i,:), FFTsize);
         H(i,2048:end) = 0;
-        H(i,:) = fft(H(i,:), nDataCarriers);
+        H(i,:) = fft(H(i,:), FFTsize);
     end    
 end

@@ -71,12 +71,13 @@ ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
-% extract data of used subcarriers
-dataRXestimated = dataRXestimated(:,1:6817);
 
 %% Channel Estimation
-H = modules.channelEstimation(dataRXestimated, pilots);
-dataRXestimated = dataRXestimated ./ H;
+H = modules.channelEstimation(dataRX, pilots);
+dataRXestimated = dataRX ./ H;
+
+% extract data of used subcarriers
+dataRX = dataRX(:,1:6817);
 
 %% Demapping
 dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);
