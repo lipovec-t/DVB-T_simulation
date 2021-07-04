@@ -8,8 +8,8 @@
 % DVB-T Parameters:
 %   FFT Size                    = 8192
 %   Number of used subcarriers  = 6817
-%   Number of data carriers     = 6249
-%   Number of pilots            = 568
+%   Number of data carriers     = 6247
+%   Number of pilots            = 570
 %   Relative CP length          = 1/4
 %   Constellation               = 16-QAM
 
@@ -18,7 +18,7 @@
 
 
 %% Generate Data
-rng('default')
+%rng('default')
 nSamples = 6817;
 kBits = 4; % Bits per sample
 nOFDMsymbols = 68; % per frame
@@ -38,7 +38,7 @@ end
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
-SNRdB   = 15;
+SNRdB   = 50;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
 % ofdmSignalRX1 corresponds to a frame of OFDM symbols
@@ -72,7 +72,7 @@ ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
 % extract data of used subcarriers
-dataRXestimated = dataRXestimated(:,1:6817);
+dataRXestimated = dataRX(:,1:6817);
 
 %% Channel Estimation
 H = modules.channelEstimation(dataRXestimated, pilots);
@@ -90,7 +90,8 @@ dataOut = de2bi(dataDemappedEstimated, 'left-msb');
 dataCompare = modules.symbolDemapping(dataMod);
 dataCompare = dataCompare.';
 dataCompare(logical(pilotPositions.')) = [];
-dataCompare = de2bi(dataCompare, 'left-msb');
+dataCompare = de2bi(dataCompare.', 'left-msb');
+
 
 % Compute errors
 errorCount = sum(reshape(dataOut',1,[]) ~= reshape(dataCompare',1,[]));

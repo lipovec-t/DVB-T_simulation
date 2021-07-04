@@ -12,9 +12,9 @@ function h = channelGenerator()
     A3 = 1 / d3;
 
     % propagation delays 
-    l1 = 3*d1 / 100;
-    l2 = 3*d2 / 100;
-    l3 = 3*d3 / 100;
+    l1 = 3*d1 / 100; % = 60
+    l2 = 3*d2 / 100; % = 300
+    l3 = 3*d3 / 100; % = 600
 
     % decay factors for PDP
     decay1 = 0.2;

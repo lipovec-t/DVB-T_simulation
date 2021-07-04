@@ -37,4 +37,5 @@ function ofdmSignalRXsynchronized = offsetEstimator(ofdmSignalRX, SNR)
     for i=1:68
         ofdmSignalRXsynchronized(i,:) = ofdmSignalRXremovedFrequOffset(timeOffsetsLocs(i):timeOffsetsLocs(i)+10240-1);
     end
+    
 end

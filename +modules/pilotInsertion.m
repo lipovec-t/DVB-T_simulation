@@ -14,6 +14,13 @@ function [dataWithPilots,pilots,pilotPositions] = pilotInsertion(dataMod)
             pilots(i,j) = 4/3 * 2 * (1/2 - sequence(j));
         end
     end
+    
+    % insert pilots on first and last subcarrier
+    pilotPositions(:,1) = 1;
+    pilots(:,1) = 4/3 * 2 * (1/2 - sequence(1));
+    pilotPositions(:,end) = 1;    
+    pilots(:,end) = 4/3 * 2 * (1/2 - sequence(end));
+    
     dataPositions = ones(nOFDMsymbols, nSubcarriers)-pilotPositions;
     dataWithPilots = dataMod .* dataPositions + pilots;
 end
