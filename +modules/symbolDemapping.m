@@ -1,4 +1,4 @@
-function dataMod = qamModulation(dataRXestimated)
+function dataModEstimated = symbolDemapping(dataIn)
 % 16-QAM using Gray modulation mapping.
 
     M = 16;         % Constellation size

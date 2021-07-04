@@ -78,7 +78,8 @@ dataRX = dataRX(:,1:6817);
 H = modules.channelEstimation(dataRX, pilots);
 dataRXestimated = dataRX ./ H;
 
-%% 16-QAM , Demodulation
+%% Demapping
+
 
 
 
