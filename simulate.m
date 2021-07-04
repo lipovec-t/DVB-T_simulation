@@ -38,7 +38,7 @@ end
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
-SNRdB   = 10;
+SNRdB   = 15;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
 % ofdmSignalRX1 corresponds to a frame of OFDM symbols
@@ -79,8 +79,22 @@ H = modules.channelEstimation(dataRX, pilots);
 dataRXestimated = dataRX ./ H;
 
 %% Demapping
+dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);
+% Remove pilots and get serial stream of data
+dataDemappedEstimated = dataDemappedEstimated.';
+dataDemappedEstimated(logical(pilotPositions.')) = [];
+dataOut = de2bi(dataDemappedEstimated, 'left-msb');
 
+%% Compute number of bit errors
+% Get original data stream
+dataCompare = modules.symbolDemapping(dataMod);
+dataCompare = dataCompare.';
+dataCompare(logical(pilotPositions.')) = [];
+dataCompare = de2bi(dataCompare, 'left-msb');
 
+% Compute errors
+errorCount = sum(reshape(dataOut',1,[]) ~= reshape(dataCompare',1,[]));
+errorRatio = errorCount / numel(dataOut);
 
 
 
