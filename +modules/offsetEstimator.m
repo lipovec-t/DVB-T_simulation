@@ -1,4 +1,4 @@
-function ofdmSignalRXsynchronized = offsetEstimator(ofdmSignalRX, SNR)
+function ofdmSignalRXsynchronized = offsetEstimator(ofdmSignalRX, SNR, timeOffset, frequencyOffset)
 % Estimates the time and frequency offset of an received OFDM signal
 % naming of the function according to the lecture notes
     K = 8192;

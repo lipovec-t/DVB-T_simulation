@@ -38,26 +38,31 @@ end
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
-SNRdB   = 50;
+SNRdB   = 20;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
+channelLength = length(modules.channelGenerator);
+channel = zeros(68,channelLength);
 % ofdmSignalRX1 corresponds to a frame of OFDM symbols
-ofdmSignalRX1 = zeros(68, 10240 + length(modules.channelGenerator) - 1);
+ofdmSignalRX1 = zeros(68, 10240);% + channelLength - 1);
+
 for i=1:nOFDMsymbols
     signalTX = ofdmSignalTX(i,:);
     signalPower = sum(abs(signalTX).^2) / length(signalTX);
     noisePower = signalPower / SNRlin;
     % convolution with channel impulse response
-    RXdataNoNoise = conv(modules.channelGenerator(),signalTX);
+    channel(i,:) = modules.channelGenerator();
+    RXdataNoNoise = conv(signalTX,channel(i,:));
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
-    ofdmSignalRX1(i,:) = RXdata1;
+    ofdmSignalRX1(i,:) = RXdata1(1:10240);
 end
+
 % reshape received OFDM frame to a row vector
 ofdmSignalRX1 = reshape(ofdmSignalRX1',1,[]);
 
 % time and frequency offset
-timeOffset = randi([0,1000],1);
+timeOffset = randi([0,600],1);
 frequencyOffsetMin = -1/2;
 frequencyOffsetMax = 1/2;
 frequencyOffset = (frequencyOffsetMax - frequencyOffsetMin) * rand() + frequencyOffsetMin;
@@ -67,7 +72,8 @@ m = 0:1:length(ofdmSignalRXdelayed)-1;
 ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
 %% Synchronisation
-ofdmSignalRXsynchronized = modules.offsetEstimator(ofdmSignalRX, SNRlin);
+ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
+% ofdmSignalRXsynchronized = ofdmSignalRX1;
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
@@ -75,7 +81,15 @@ dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
 dataRXestimated = dataRX(:,1:6817);
 
 %% Channel Estimation
-H = modules.channelEstimation(dataRXestimated, pilots);
+%H = modules.channelEstimation(dataRXestimated, pilots);
+
+% assume perfect channel knowledge
+H = zeros(nOFDMsymbols,8192);
+for i=1:nOFDMsymbols
+    H(i,:) = fft(channel(i,:),8192);
+end
+H = H(:,1:6817);
+%----------------------------------
 dataRXestimated = dataRXestimated ./ H;
 
 %% Demapping
