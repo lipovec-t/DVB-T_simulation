@@ -25,10 +25,10 @@ nOFDMsymbols = 68; % per frame
 % Generate vector of random binary data.
 dataIn = randi([0 1], 68, nSamples*kBits);
 
-%% Modulation
+%% 16-QAM
 dataMod = zeros(nOFDMsymbols, nSamples);
 for i=1:nOFDMsymbols
-    dataMod(i,:) = modules.qamModulation(dataIn(i,:)); % 16-QAM
+    dataMod(i,:) = modules.qamModulation(dataIn(i,:)); 
 end
 
 %% Pilot insertion
@@ -76,6 +76,10 @@ dataRX = dataRX(:,1:6817);
 
 %% Channel Estimation
 H = modules.channelEstimation(dataRX, pilots);
+dataRXestimated = dataRX ./ H;
+
+%% 16-QAM , Demodulation
+
 
 
 
