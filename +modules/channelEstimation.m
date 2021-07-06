@@ -6,17 +6,19 @@ function H = channelEstimation(dataRX, pilots)
     H = dataRX ./ pilots;
     H(isinf(H)|isnan(H)) = 0;
     
-%     for i=1:nOFDMsymbols
-%         H(i,:) = ifft(H(i,:), nDataCarriers);
-%         H(i,2048:end) = 0;
-%         H(i,:) = fft(H(i,:), nDataCarriers);
-%     end
+    H=H(H~=0);
     
     for i=1:nOFDMsymbols
-        queryPoints = find(H(i,:)==0);
-        y = spline(find(H(i,:)),H(i,find(H(i,:))),queryPoints);
-        H(i,queryPoints) = y;
+        H(i,:) = ifft(H(i,:), nDataCarriers);
+        H(i,2048:end) = 0;
+        H(i,:) = fft(H(i,:), nDataCarriers);
     end
+    
+%     for i=1:nOFDMsymbols
+%         queryPoints = find(H(i,:)==0);
+%         y = spline(find(H(i,:)),H(i,find(H(i,:))),queryPoints);
+%         H(i,queryPoints) = y;
+%     end
     
 %     [gr, gc, gv] = find(H);
 %     F = scatteredInterpolant(gr, gc, gv);

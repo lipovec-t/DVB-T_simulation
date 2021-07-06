@@ -59,21 +59,21 @@ for i=1:nOFDMsymbols
 end
 
 % reshape received OFDM frame to a row vector
-ofdmSignalRX1 = reshape(ofdmSignalRX1',1,[]);
+ofdmSignalRX2 = reshape(ofdmSignalRX1',1,[]);
 
 % time and frequency offset
 timeOffset = randi([0,600],1);
 frequencyOffsetMin = -1/2;
 frequencyOffsetMax = 1/2;
 frequencyOffset = (frequencyOffsetMax - frequencyOffsetMin) * rand() + frequencyOffsetMin;
-ofdmSignalRXdelayed = [zeros(1,timeOffset), ofdmSignalRX1];
+ofdmSignalRXdelayed = [zeros(1,timeOffset), ofdmSignalRX2];
 ofdmSignalRXdelayed(1:timeOffset) = sqrt(noisePower/2) * (randn(1,timeOffset) + 1j*randn(1,timeOffset));
 m = 0:1:length(ofdmSignalRXdelayed)-1;
 ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
 %% Synchronisation
-ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
-% ofdmSignalRXsynchronized = ofdmSignalRX1;
+%ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
+ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
@@ -81,7 +81,7 @@ dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
 dataRXestimated = dataRX(:,1:6817);
 
 %% Channel Estimation
-%H = modules.channelEstimation(dataRXestimated, pilots);
+% H = modules.channelEstimation(dataRXestimated, pilots);
 
 % assume perfect channel knowledge
 H = zeros(nOFDMsymbols,8192);
