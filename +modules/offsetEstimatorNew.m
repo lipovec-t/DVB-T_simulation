@@ -22,7 +22,7 @@ function ofdmSignalRXsynchronized = offsetEstimatorNew(ofdmSignalRX, SNR, timeOf
     % compute frequency offset
     maxGamma = max(gamma);
     offset = find(gamma == maxGamma);
-    offset = timeOffset;
+    % offset = timeOffset;
     frequencyOffsetEstimate = -angle(phi(offset)) / (2*pi);
     
     % remove frequency offset
@@ -34,7 +34,7 @@ function ofdmSignalRXsynchronized = offsetEstimatorNew(ofdmSignalRX, SNR, timeOf
     if perfectLength-length(ofdmSignalRXsynchronized) >= 0
         ofdmSignalRXsynchronized = [ofdmSignalRXsynchronized, zeros(1,perfectLength-length(ofdmSignalRXsynchronized))];
     else
-        ofdmSignalRXsynchronized = ofdmSignalRXsynchronized(1,perfectLength);
+        ofdmSignalRXsynchronized = ofdmSignalRXsynchronized(1:perfectLength);
     end
     ofdmSignalRXsynchronized = reshape(ofdmSignalRXsynchronized,10240,68)';
 end

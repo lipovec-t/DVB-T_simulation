@@ -52,7 +52,7 @@ for i=1:nOFDMsymbols
     noisePower = signalPower / SNRlin;
     % convolution with channel impulse response
     channel(i,:) = modules.channelGenerator();
-    RXdataNoNoise = conv(signalTX,channel(i,:));
+    RXdataNoNoise = conv(signalTX,channel(i,:), 'same');
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
     ofdmSignalRX1(i,:) = RXdata1(1:10240);
@@ -72,8 +72,8 @@ m = 0:1:length(ofdmSignalRXdelayed)-1;
 ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
 %% Synchronisation
-%ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
-ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
+ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
+%ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
