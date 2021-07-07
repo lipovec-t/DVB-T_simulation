@@ -3,7 +3,7 @@
 % Author: Thomas Lipovec
 % Matriculation number: 01529232
 % Email: thomas.lipovec@tuwien.ac.at
-% March 2021; Last revision: 02-March-2021
+% March 2021; Last revision: 07-July-2021
 
 % DVB-T Parameters:
 %   FFT Size                    = 8192
@@ -52,7 +52,7 @@ for i=1:nOFDMsymbols
     noisePower = signalPower / SNRlin;
     % convolution with channel impulse response
     channel(i,:) = modules.channelGenerator();
-    RXdataNoNoise = conv(signalTX,channel(i,:), 'same');
+    RXdataNoNoise = conv(signalTX,channel(i,:));
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
     ofdmSignalRX1(i,:) = RXdata1(1:10240);
