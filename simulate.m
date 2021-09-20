@@ -38,7 +38,7 @@ end
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
-SNRdB   = 20;
+SNRdB   = 30;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
 channelLength = length(modules.channelGenerator);
@@ -72,8 +72,8 @@ m = 0:1:length(ofdmSignalRXdelayed)-1;
 ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
 %% Synchronisation
-ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
-%ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
+%ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
+ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
@@ -81,7 +81,7 @@ dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
 dataRXestimated = dataRX(:,1:6817);
 
 %% Channel Estimation
-% H = modules.channelEstimation(dataRXestimated, pilots);
+Hest = modules.channelEstimation(dataRXestimated, pilots);
 
 % assume perfect channel knowledge
 H = zeros(nOFDMsymbols,8192);

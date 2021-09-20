@@ -11,6 +11,6 @@ function dataRX = ofdmDemodulator(ofdmSignalRXsynchronized)
         % FFT
         dataRX(i,:) = fft(dataRX(i,:), FFTsize);
         % zero frequency shift
-        dataRX(i,:) = fftshift(dataRX(i,:));
+        %dataRX(i,:) = fftshift(dataRX(i,:));
     end
 end

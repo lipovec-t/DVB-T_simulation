@@ -42,29 +42,40 @@ SNRdB   = 20;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
 channelLength = length(modules.channelGenerator);
-channel = zeros(68,channelLength);
+% channel = zeros(68,channelLength);
 % ofdmSignalRX1 corresponds to a frame of OFDM symbols
 convLength = 10240 + channelLength - 1;
-ofdmSignalRX1 = zeros(68, 10240);% + channelLength - 1);
-ofdmSignalRX2 = zeros(1, 68*10240);
+%ofdmSignalRX1 = zeros(68, 10240);% + channelLength - 1);
+%ofdmSignalRX2 = zeros(1, 68*10240);
 
-for i=1:nOFDMsymbols
-    signalTX = ofdmSignalTX(i,:);
-    signalPower = sum(abs(signalTX).^2) / length(signalTX);
-    noisePower = signalPower / SNRlin;
-    % convolution with channel impulse response
-    channel(i,:) = modules.channelGenerator();
-    RXdataNoNoise = conv(signalTX,channel(i,:));
-    n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
-    RXdata1 = RXdataNoNoise + n;
-    if i==1
-        ofdmSignalRX2(1:10240) = ofdmSignalRX2(1:10240)+RXdata1(channelLength:end);
-    elseif i==nOFDMsymbols
-        ofdmSignalRX2(end-10240+1:end) =ofdmSignalRX2(end-10240+1:end)+ RXdata1(1:end-channelLength+1);
-    else
-        ofdmSignalRX2((i-1)*(10240-channelLength)+1:(i-1)*(10240-channelLength)+convLength) =ofdmSignalRX2((i-1)*(10240-channelLength)+1:(i-1)*(10240-channelLength)+convLength)+ RXdata1;
-    end
-end
+% different try for transmission
+signalTX = reshape(ofdmSignalTX',1,[]);
+signalPower = sum(abs(signalTX).^2) / length(signalTX);
+noisePower = signalPower / SNRlin;
+channel = modules.channelGenerator();
+RXdataNoNoise = conv(signalTX,channel);
+n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
+RXdata1 = RXdataNoNoise + n;
+ofdmSignalRX2 = RXdata1(1:68*10240);
+
+% for i=1:nOFDMsymbols
+%     signalTX = ofdmSignalTX(i,:);
+%     signalPower = sum(abs(signalTX).^2) / length(signalTX);
+%     noisePower = signalPower / SNRlin;
+%     % convolution with channel impulse response
+%     channel(i,:) = modules.channelGenerator();
+%     RXdataNoNoise = conv(signalTX,channel(i,:));
+%     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
+%     RXdata1 = RXdataNoNoise + n;
+%     if i==1
+%         ofdmSignalRX2(1:10240) = ofdmSignalRX2(1:10240)+RXdata1(channelLength:end);
+%     elseif i==nOFDMsymbols
+%         ofdmSignalRX2(end-10240+1:end) =ofdmSignalRX2(end-10240+1:end)+ RXdata1(1:end-channelLength+1);
+%     else
+%         ofdmSignalRX2((i-1)*(10240-channelLength)+1:(i-1)*(10240-channelLength)+convLength) =ofdmSignalRX2((i-1)*(10240-channelLength)+1:(i-1)*(10240-channelLength)+convLength)+ RXdata1;
+%     end
+% end
+
 ofdmSignalRX1 = reshape(ofdmSignalRX2,10240,68)';
 
 % time and frequency offset
@@ -87,16 +98,16 @@ dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
 dataRXestimated = dataRX(:,1:6817);
 
 %% Channel Estimation
-% H = modules.channelEstimation(dataRXestimated, pilots);
+Hest = modules.channelEstimation(dataRXestimated, pilots);
 
 % assume perfect channel knowledge
 H = zeros(nOFDMsymbols,8192);
 for i=1:nOFDMsymbols
-    H(i,:) = fft(channel(i,:),8192);
+    H(i,:) = fft(channel,8192);
 end
 H = H(:,1:6817);
 %----------------------------------
-dataRXestimated = dataRXestimated ./ H;
+dataRXestimated = dataRXestimated ./ Hest;
 
 %% Demapping
 dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);

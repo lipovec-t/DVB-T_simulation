@@ -4,15 +4,21 @@ function H = channelEstimation(dataRX, pilots)
     nDataCarriers = 6817;
     
     H = dataRX ./ pilots;
-    H(isinf(H)|isnan(H)) = 0;
+    H(isinf(H)|isnan(H)) = NaN + 1i*NaN;
     
-    H=H(H~=0);
+    %interpolate over freqeuncy
+    H = fillmissing(H,'spline',2);
+    %interpolate over time
+    H = fillmissing(H,'spline');
     
-    for i=1:nOFDMsymbols
-        H(i,:) = ifft(H(i,:), nDataCarriers);
-        H(i,2048:end) = 0;
-        H(i,:) = fft(H(i,:), nDataCarriers);
-    end
+    
+%     H=H(H~=0);
+%     
+%     for i=1:nOFDMsymbols
+%         H(i,:) = ifft(H(i,:), nDataCarriers);
+%         H(i,2048:end) = 0;
+%         H(i,:) = fft(H(i,:), nDataCarriers);
+%     end
     
 %     for i=1:nOFDMsymbols
 %         queryPoints = find(H(i,:)==0);
