@@ -5,6 +5,8 @@ function ofdmSignal = ofdmModulator(dataModWithPilots)
     CPlength = 8192/4;
     ofdmSignal = zeros(nOFDMsymbols, FFTsize + CPlength);
     for i=1:nOFDMsymbols
+        % zero frequency shift
+        dataModWithPilots(i,:) = ifftshift(dataModWithPilots(i,:));
         % IFFT from CPLength to end
         ofdmSignal(i,CPlength+1:end) = ifft(dataModWithPilots(i,:), FFTsize);
         % Insert CP at the beginning of the signal
