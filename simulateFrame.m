@@ -1,5 +1,10 @@
-function [errorCount, errorRatio] = simulateFrame(SNRdB)
+function [errorCount, errorRatio, timeErr, frequencyErr, channelErr] = simulateFrame(SNRdB)
 % Simulaton of a frame consisting of 68 OFDM symbols
+    
+    % for debugging
+    simulateOffset = true;
+    simulateChannelEstimation = true;
+
     %% Generate Data
     nSamples = 6817;
     kBits = 4; % Bits per sample
@@ -53,8 +58,15 @@ function [errorCount, errorRatio] = simulateFrame(SNRdB)
     ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
     %% Synchronisation
-    ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
-    %ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
+    if simulateOffset
+        [ofdmSignalRXsynchronized, timeOffsetEst, frequencyOffsetEst] = modules.offsetEstimator(ofdmSignalRX, SNRlin);
+        timeErr = (timeOffset - timeOffsetEst)^2;
+        frequencyErr = (frequencyOffset - frequencyOffsetEst)^2;
+    else
+        timeErr = 0;
+        frequencyErr = 0;
+        ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
+    end
 
     %% Demodulation
     dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
@@ -70,8 +82,15 @@ function [errorCount, errorRatio] = simulateFrame(SNRdB)
         H(i,:) = fft(channel(i,:),8192);
     end
     H = H(:,1:6817);
-    %----------------------------------
-    dataRXestimated = dataRXestimated ./ H;
+    
+    % compute channel estimation error
+    channelErr = sum(abs(H(:)-Hest(:)).^2) / numel(H);
+    
+    if simulateChannelEstimation
+        dataRXestimated = dataRXestimated ./ Hest;
+    else       
+        dataRXestimated = dataRXestimated ./ H;
+    end
 
     %% Demapping
     dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);
