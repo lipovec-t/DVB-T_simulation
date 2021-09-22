@@ -38,12 +38,12 @@ end
 ofdmSignalTX = modules.ofdmModulator(dataModWithPilots);
 
 %% Channel simulation
-SNRdB   = 30;
+SNRdB   = 20;
 SNRlin  = 10^(SNRdB/10);
 % transmit data over channel
-channelLength = length(modules.channelGenerator);
+channelLength = length(modules.channelGenerator); % 1370
 channel = zeros(68,channelLength);
-% ofdmSignalRX1 corresponds to a frame of OFDM symbols
+% ofdmSignalRX1 corresponds to a received frame of OFDM symbols
 ofdmSignalRX1 = zeros(68, 10240);% + channelLength - 1);
 
 for i=1:nOFDMsymbols
@@ -53,6 +53,7 @@ for i=1:nOFDMsymbols
     % convolution with channel impulse response
     channel(i,:) = modules.channelGenerator();
     RXdataNoNoise = conv(signalTX,channel(i,:));
+    %RXdataNoNoise = tools.convolve(channel(i,:), signalTX).';
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
     ofdmSignalRX1(i,:) = RXdata1(1:10240);

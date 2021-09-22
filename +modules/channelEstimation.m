@@ -9,7 +9,7 @@ function H = channelEstimation(dataRX, pilots)
     %interpolate over freqeuncy
     H = fillmissing(H,'spline',2);
     %interpolate over time
-    H = fillmissing(H,'spline');
+    %H = fillmissing(H,'spline');
     
     
 %     H=H(H~=0);
