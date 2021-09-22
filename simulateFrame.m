@@ -71,7 +71,7 @@ function [errorCount, errorRatio] = simulateFrame(SNRdB)
     end
     H = H(:,1:6817);
     %----------------------------------
-    dataRXestimated = dataRXestimated ./ Hest;
+    dataRXestimated = dataRXestimated ./ H;
 
     %% Demapping
     dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);

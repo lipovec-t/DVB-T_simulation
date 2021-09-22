@@ -21,22 +21,8 @@
 %% Main simulation loop
 
 % SNR values to evaluate
-SNRdB = 0:40;
-% allocate vector for BER values
-BER = zeros(1,numel(SNRdB));
-% transmitted data bits in 1 frame
-nDataBits = 1699252;
+nSNRdB = 0:30;
 
-for j = 1:numel(SNRdB)   
-    % repeat until at least 10 errors have been observed
-    i = 1;
-    errorCount = 0;
-    while errorCount < 10
-        [iErrorCount, ~] = simulateFrame(SNRdB(j));
-        errorCount = errorCount + iErrorCount;
-        BER(j) =  errorCount / (i*nDataBits);
-        i=i+1;
-    end
+for iSNRdB = nSNRdB
+    while 
 end
-
-
