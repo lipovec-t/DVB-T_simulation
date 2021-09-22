@@ -73,8 +73,8 @@ m = 0:1:length(ofdmSignalRXdelayed)-1;
 ofdmSignalRX = ofdmSignalRXdelayed .* exp(1i*2*pi*frequencyOffset*m/8192);
 
 %% Synchronisation
-%ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
-ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
+ofdmSignalRXsynchronized = modules.offsetEstimatorNew(ofdmSignalRX, SNRlin, timeOffset, frequencyOffset);
+%ofdmSignalRXsynchronized = ofdmSignalRX1; % without offset & synchronization
 
 %% Demodulation
 dataRX = modules.ofdmDemodulator(ofdmSignalRXsynchronized);
@@ -91,7 +91,7 @@ for i=1:nOFDMsymbols
 end
 H = H(:,1:6817);
 %----------------------------------
-dataRXestimated = dataRXestimated ./ H;
+dataRXestimated = dataRXestimated ./ Hest;
 
 %% Demapping
 dataDemappedEstimated = modules.symbolDemapping(dataRXestimated);

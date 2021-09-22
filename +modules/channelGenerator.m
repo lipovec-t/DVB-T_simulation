@@ -62,9 +62,9 @@ function h = channelGenerator()
     h3 = riceanAmp3.*PDPamp3;
     
     h_notNormalized = zeros(1,l3+nMultipaths3+1);
-    h_notNormalized(l1:l1+nMultipaths1) = h_notNormalized(l1:l1+nMultipaths1) + h1;
-    h_notNormalized(l2:l2+nMultipaths2) = h_notNormalized(l2:l2+nMultipaths2) + h2;
-    h_notNormalized(l3:l3+nMultipaths3) = h_notNormalized(l3:l3+nMultipaths3) + h3;
+    h_notNormalized(l1:l1+nMultipaths1) = h_notNormalized(l1:l1+nMultipaths1) + A1*h1;
+    h_notNormalized(l2:l2+nMultipaths2) = h_notNormalized(l2:l2+nMultipaths2) + A2*h2;
+    h_notNormalized(l3:l3+nMultipaths3) = h_notNormalized(l3:l3+nMultipaths3) + A3*h3;
         
     h = h_notNormalized / sqrt(sum(abs(h_notNormalized).^2));
     
