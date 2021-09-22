@@ -53,7 +53,6 @@ for i=1:nOFDMsymbols
     % convolution with channel impulse response
     channel(i,:) = modules.channelGenerator();
     RXdataNoNoise = conv(signalTX,channel(i,:));
-    %RXdataNoNoise = tools.convolve(channel(i,:), signalTX).';
     n = sqrt(noisePower/2) * (randn(1,length(RXdataNoNoise)) + 1j*randn(1,length(RXdataNoNoise)));
     RXdata1 = RXdataNoNoise + n;
     ofdmSignalRX1(i,:) = RXdata1(1:10240);
