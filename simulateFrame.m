@@ -2,7 +2,7 @@ function [errorCount, errorRatio, timeErr, frequencyErr, channelErr] = simulateF
 % Simulaton of a frame consisting of 68 OFDM symbols
     
     % for debugging
-    simulateOffset = false;
+    simulateOffset = true;
     simulateChannelEstimation = true;
 
     %% Generate Data

@@ -20,7 +20,7 @@
 
 %% Main simulation loop
 % SNR values to evaluate
-SNRdB = 0:40;
+SNRdB = 0:80;
 % allocate vector for BER values and estimation errors
 BER = zeros(1,numel(SNRdB));
 timeOffsetEstMSE = zeros(1,numel(SNRdB));
