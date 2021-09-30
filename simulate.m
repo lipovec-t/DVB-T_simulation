@@ -35,17 +35,17 @@ for j = 1:numel(SNRdB)
     % repeat until at least 10 errors have been observed
     i = 1;
     errorCount = 0;
-    while errorCount < 10
-        [iErrorCount, ~,  timeErr, frequencyErr, channelErr] = simulateFrameAWGN(SNRdB(j));
+    while i<=55%errorCount < 10
+        [iErrorCount, ~,  timeErr, frequencyErr, channelErr] = simulateFrameStaticChannel(SNRdB(j));
         errorCount = errorCount + iErrorCount;
         BER(j) =  errorCount / (i*nDataBits);
         timeOffsetEstMSE(j) = timeOffsetEstMSE(j) + timeErr;
         frequencyOffsetEstMSE(j) = frequencyOffsetEstMSE(j) + frequencyErr;
         channelEstMSE(j) = channelEstMSE(j) + channelErr;
         i=i+1;
-        if errorCount == 0
-            break;
-        end
+%         if errorCount == 0
+%             break;
+%         end
     end
     timeOffsetEstMSE(j) = timeOffsetEstMSE(j) / (i-1);
     frequencyOffsetEstMSE(j) = frequencyOffsetEstMSE(j) / (i-1);
