@@ -1,8 +1,10 @@
-function [errorCount, errorRatio, timeErr, frequencyErr] = simulateFrameAWGN(SNRdB)
+function [errorCount, errorRatio, timeErr, frequencyErr, channelErr] = simulateFrameAWGN(SNRdB)
 % Simulation of a frame consisting of 68 OFDM symbols over an AWGN channel
     
     % for debugging
     simulateOffset = false;
+    % for consistency
+    channelErr = 0;
 
     %% Generate Data
     nSamples = 6817;

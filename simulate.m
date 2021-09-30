@@ -20,12 +20,14 @@
 
 %% Main simulation loop
 % SNR values to evaluate
-SNRdB = 0:80;
+SNRdB = 0:50;
 % allocate vector for BER values and estimation errors
 BER = zeros(1,numel(SNRdB));
 timeOffsetEstMSE = zeros(1,numel(SNRdB));
 frequencyOffsetEstMSE = zeros(1,numel(SNRdB));
 channelEstMSE = zeros(1,numel(SNRdB));
+% plot estimation errors
+plotEstimationErrors = false;
 % transmitted data bits in 1 frame
 nDataBits = 1699252;
 
@@ -34,13 +36,16 @@ for j = 1:numel(SNRdB)
     i = 1;
     errorCount = 0;
     while errorCount < 10
-        [iErrorCount, ~,  timeErr, frequencyErr, channelErr] = simulateFrame(SNRdB(j));
+        [iErrorCount, ~,  timeErr, frequencyErr, channelErr] = simulateFrameAWGN(SNRdB(j));
         errorCount = errorCount + iErrorCount;
         BER(j) =  errorCount / (i*nDataBits);
         timeOffsetEstMSE(j) = timeOffsetEstMSE(j) + timeErr;
         frequencyOffsetEstMSE(j) = frequencyOffsetEstMSE(j) + frequencyErr;
         channelEstMSE(j) = channelEstMSE(j) + channelErr;
         i=i+1;
+        if errorCount == 0
+            break;
+        end
     end
     timeOffsetEstMSE(j) = timeOffsetEstMSE(j) / (i-1);
     frequencyOffsetEstMSE(j) = frequencyOffsetEstMSE(j) / (i-1);
@@ -52,20 +57,22 @@ semilogy(SNRdB, BER);
 xlabel('SNR (dB)')
 ylabel('BER')
 
-figure()
-semilogy(SNRdB, timeOffsetEstMSE);
-xlabel('SNR (dB)')
-ylabel('Timeoffset Estimation MSE')
+if plotEstimationErrors
+    figure()
+    semilogy(SNRdB, timeOffsetEstMSE);
+    xlabel('SNR (dB)')
+    ylabel('Timeoffset Estimation MSE')
 
-figure()
-semilogy(SNRdB, frequencyOffsetEstMSE);
-xlabel('SNR (dB)')
-ylabel('Frequency Estimation MSE')
- 
-figure()
-semilogy(SNRdB, channelEstMSE);
-xlabel('SNR (dB)')
-ylabel('Channel Estimation MSE')
+    figure()
+    semilogy(SNRdB, frequencyOffsetEstMSE);
+    xlabel('SNR (dB)')
+    ylabel('Frequency Estimation MSE')
+
+    figure()
+    semilogy(SNRdB, channelEstMSE);
+    xlabel('SNR (dB)')
+    ylabel('Channel Estimation MSE')
+end
 
 
 
