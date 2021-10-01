@@ -1,5 +1,5 @@
 function [errorCount, errorRatio, timeErr, frequencyErr, channelErr] = simulateFrame(SNRdB)
-% Simulaton of a frame consisting of 68 OFDM symbols
+% Simulation of a frame consisting of 68 OFDM symbols
     
     % for debugging
     simulateOffset = true;

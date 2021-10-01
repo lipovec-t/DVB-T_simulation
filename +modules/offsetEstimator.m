@@ -21,7 +21,7 @@ function [ofdmSignalRXsynchronized,timeOffsetEstimate, frequencyOffsetEstimate] 
     
     % compute frequency offset
     maxGamma = max(gamma);
-    timeOffsetEstimate = find(gamma == maxGamma)-1;
+    timeOffsetEstimate = find(gamma == maxGamma);
     frequencyOffsetEstimate = -angle(phi(timeOffsetEstimate)) / (2*pi);
     
     % remove frequency offset
