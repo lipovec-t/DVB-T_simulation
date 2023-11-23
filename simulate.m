@@ -2,8 +2,6 @@
 % based on ETSI EN 300 744 V1.6.1 (2009-01)
 
 % Author: Thomas Lipovec
-% Matriculation number: 01529232
-% Email: thomas.lipovec@tuwien.ac.at
 % Last revision: 22-September-2021
 
 % DVB-T Parameters:
